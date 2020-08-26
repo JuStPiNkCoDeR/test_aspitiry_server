@@ -8,14 +8,17 @@
     "deploy": "npm run test && npm run build && npm run start",
     "lint": "eslint --fix --ext .ts src/**/*",
     "test": "jest",
-    "docker-deploy": "docker-compose up -d"
+    "docker-deploy": "docker-compose up -d",
+    "docker-deploy-rebuild": "docker-compose up --build -d"
   },
   "dependencies": {
     "@types/cookie-parser": "^1.4.2",
+    "@types/cors": "^2.8.7",
     "@types/joi": "^14.3.4",
     "@types/morgan": "^1.9.1",
     "@types/uuid": "^8.3.0",
     "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
     "debug": "~2.6.9",
     "express": "~4.16.1",
     "hbs": "~4.0.4",

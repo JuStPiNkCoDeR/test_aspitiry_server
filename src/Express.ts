@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import logger from 'morgan';
 import cookieParser from 'cookie-parser';
 import ApiController from './controllers/ApiController';
@@ -42,6 +43,7 @@ class Express {
           this.db.getRepository('TRAININGS'),
       );
 
+      this.app.use(cors());
       this.app.use('/api', apiController.getRouter());
     }
 }

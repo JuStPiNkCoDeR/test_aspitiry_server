@@ -7,4 +7,4 @@ services:
     working_dir: /app
     command: npm run deploy
     ports:
-    - '3030:3000'
+    - '80:3000'
