@@ -1,0 +1,10 @@
+version: "3.4"
+
+services:
+  server:
+    build: ./
+    container_name: test_aspirity_server
+    working_dir: /app
+    command: npm run deploy
+    ports:
+    - '3030:3000'

@@ -14,7 +14,7 @@ const SAVE_TRAINING_SCHEMA = Joi.object({
       ActivityTypes.WALKING,
   ).required(),
   distance: Joi.number().min(1).max(99).required(),
-  comment: Joi.string().max(300).required(),
+  comment: Joi.string().allow('').max(300).optional(),
 });
 
 const GET_TRAININGS_SCHEMA = Joi.object({
@@ -34,7 +34,7 @@ const UPDATE_TRAINING_SCHEMA = Joi.object({
         ActivityTypes.BICYCLE,
         ActivityTypes.WALKING,
     ).optional(),
-    comment: Joi.string().max(300).optional(),
+    comment: Joi.string().allow('').max(300).required(),
   }).required(),
 });
 
@@ -75,7 +75,7 @@ class ApiController implements Controller {
     protected saveTraining(req: Request, res: Response): void {
       const input = this.validate(
           SAVE_TRAINING_SCHEMA,
-          req.query,
+          req.body,
           res,
           'Wrong input data',
       );
@@ -96,8 +96,9 @@ class ApiController implements Controller {
 
       this.repo.save(training);
 
-      res.json(training);
-      res.sendStatus(200);
+      res.json({
+        data: training,
+      });
     }
 
     /**
@@ -128,8 +129,9 @@ class ApiController implements Controller {
       };
       const trainings = this.repo.get(filterFunction);
 
-      res.json(trainings);
-      res.sendStatus(200);
+      res.json({
+        data: trainings,
+      });
     }
 
     /**
@@ -155,7 +157,7 @@ class ApiController implements Controller {
           (item: Training) => item.ID === input.ID;
       this.repo.update(condition, input.data);
 
-      res.sendStatus(200);
+      res.sendStatus(204);
     }
 
     /**
@@ -181,7 +183,7 @@ class ApiController implements Controller {
           (item: Training) => item.ID === input.ID;
       this.repo.delete(predicate);
 
-      res.sendStatus(200);
+      res.sendStatus(204);
     }
 
     /**
