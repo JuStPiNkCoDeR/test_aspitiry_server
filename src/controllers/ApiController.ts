@@ -1,7 +1,21 @@
 import {Router, Request, Response} from 'express';
 import Joi from 'joi';
 import {ClassicRepository} from '../database';
-import {Training} from '../database/models';
+import {ActivityTypes, Training} from '../database/models';
+import {v4} from 'uuid';
+
+const SAVE_TRAINING_SCHEMA = Joi.object({
+  date: Joi.date().required(),
+  fullName: Joi.string().trim().max(99).required(),
+  activityType: Joi.string().valid(
+      ActivityTypes.RUN,
+      ActivityTypes.SKIING,
+      ActivityTypes.BICYCLE,
+      ActivityTypes.WALKING,
+  ).required(),
+  distance: Joi.number().min(1).max(99).required(),
+  comment: Joi.string().max(300).required(),
+});
 
 const GET_TRAININGS_SCHEMA = Joi.object({
   activityType: Joi.string().valid(
@@ -15,7 +29,10 @@ const UPDATE_TRAINING_SCHEMA = Joi.object({
     distance: Joi.number().min(1).max(99).optional(),
     date: Joi.date().optional(),
     activityType: Joi.string().valid(
-        'RUN', 'WALKING', 'BICYCLE', 'SKIING',
+        ActivityTypes.RUN,
+        ActivityTypes.SKIING,
+        ActivityTypes.BICYCLE,
+        ActivityTypes.WALKING,
     ).optional(),
     comment: Joi.string().max(300).optional(),
   }).required(),
@@ -24,8 +41,10 @@ const UPDATE_TRAINING_SCHEMA = Joi.object({
 export interface Controller {
     getRouter(): Router
 }
+
 /**
- *
+ * @description Handles request to /api url
+ *  Works on trainings storage.
  */
 class ApiController implements Controller {
     protected router: Router;
@@ -38,7 +57,41 @@ class ApiController implements Controller {
       this.repo = repository;
       this.router = Router();
       this.router.get('/', this.getTrainings.bind(this));
-      this.router.put('/', this.updateTraining.bind(this));
+      this.router.patch('/', this.updateTraining.bind(this));
+    }
+
+    /**
+     * @description Save and return saved instance
+     * @param {Request} req
+     * @param {Response} res
+     * @protected
+     */
+    protected saveTraining(req: Request, res: Response): void {
+      const input = this.validate(
+          SAVE_TRAINING_SCHEMA,
+          req.query,
+          res,
+          'Wrong input data',
+      );
+
+      if (input === undefined) {
+        res.end();
+        return;
+      }
+
+      const training: Training = {
+        ID: v4(),
+        date: new Date(input.date),
+        fullName: input.fullName,
+        activityType: input.activityType,
+        distance: input.distance,
+        comment: input.comment,
+      };
+
+      this.repo.save(training);
+
+      res.json(training);
+      res.end();
     }
 
     /**
