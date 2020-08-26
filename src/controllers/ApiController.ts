@@ -38,6 +38,10 @@ const UPDATE_TRAINING_SCHEMA = Joi.object({
   }).required(),
 });
 
+const DELETE_TRAINING_SCHEMA = Joi.object({
+  ID: Joi.string().uuid({version: 'uuidv4'}).required(),
+});
+
 export interface Controller {
     getRouter(): Router
 }
@@ -56,8 +60,10 @@ class ApiController implements Controller {
     constructor(repository: ClassicRepository<Training>) {
       this.repo = repository;
       this.router = Router();
+      this.router.post('/', this.saveTraining.bind(this));
       this.router.get('/', this.getTrainings.bind(this));
       this.router.patch('/', this.updateTraining.bind(this));
+      this.router.delete('/', this.deleteTraining.bind(this));
     }
 
     /**
@@ -91,7 +97,7 @@ class ApiController implements Controller {
       this.repo.save(training);
 
       res.json(training);
-      res.end();
+      res.sendStatus(200);
     }
 
     /**
@@ -123,7 +129,7 @@ class ApiController implements Controller {
       const trainings = this.repo.get(filterFunction);
 
       res.json(trainings);
-      res.end();
+      res.sendStatus(200);
     }
 
     /**
@@ -149,7 +155,33 @@ class ApiController implements Controller {
           (item: Training) => item.ID === input.ID;
       this.repo.update(condition, input.data);
 
-      res.end();
+      res.sendStatus(200);
+    }
+
+    /**
+     * @description Delete training if exists
+     * @param {Request} req
+     * @param {Response} res
+     * @protected
+     */
+    protected deleteTraining(req: Request, res: Response): void {
+      const input = this.validate(
+          DELETE_TRAINING_SCHEMA,
+          req.body,
+          res,
+          'Wrong condition params',
+      );
+
+      if (input === undefined) {
+        res.end();
+        return;
+      }
+
+      const predicate =
+          (item: Training) => item.ID === input.ID;
+      this.repo.delete(predicate);
+
+      res.sendStatus(200);
     }
 
     /**
@@ -167,7 +199,7 @@ class ApiController implements Controller {
         res: Response,
         errorMessage: string,
     ): any {
-      const {error, value} = GET_TRAININGS_SCHEMA.validate(input);
+      const {error, value} = schema.validate(input);
 
       if (error != undefined) {
         res.status(400).send(errorMessage);
@@ -177,6 +209,7 @@ class ApiController implements Controller {
         return value;
       }
     }
+
     /**
      * @description Gets current controllers' routes
      * @return {Router}
