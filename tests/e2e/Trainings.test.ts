@@ -38,7 +38,7 @@ describe('ApiController endpoints test', () => {
           .send({
             wrongField: 'wrong value',
           })
-          .expect(400, 'Wrong input data', done);
+          .expect(400, done);
     });
 
     it('should reject on invalid input data', (done) => {
@@ -51,7 +51,7 @@ describe('ApiController endpoints test', () => {
             distance: 2,
             comment: '',
           })
-          .expect(400, 'Wrong input data', done);
+          .expect(400, done);
     });
   });
 
@@ -65,7 +65,7 @@ describe('ApiController endpoints test', () => {
     it('should reject on wrong filter params', (done) => {
       request(app)
           .get('/api/?whatFilter=filterHere')
-          .expect(400, 'Wrong query params', done);
+          .expect(400, done);
     });
   });
 
@@ -104,7 +104,7 @@ describe('ApiController endpoints test', () => {
               comment: 'Marvelous comment',
             },
           })
-          .expect(204);
+          .expect(200);
     });
 
     it('should reject on empty ID field', (done) => {
@@ -115,7 +115,7 @@ describe('ApiController endpoints test', () => {
               comment: '',
             },
           })
-          .expect(400, 'Wrong body params', done);
+          .expect(400, done);
     });
 
     it('should reject on wrong data field', (done) => {
@@ -127,7 +127,7 @@ describe('ApiController endpoints test', () => {
               wtfField: '?!?',
             },
           })
-          .expect(400, 'Wrong body params', done);
+          .expect(400, done);
     });
   });
 
@@ -173,7 +173,7 @@ describe('ApiController endpoints test', () => {
           .send({
             ID: instanceData.ID,
           })
-          .expect(204);
+          .expect(200);
 
       allTrainingsResponse = await request(app)
           .get('/api/?activityType=ALL')
@@ -194,7 +194,7 @@ describe('ApiController endpoints test', () => {
       request(app)
           .delete('/api/')
           .send({})
-          .expect(400, 'Wrong condition params', done);
+          .expect(400, done);
     });
   });
 });

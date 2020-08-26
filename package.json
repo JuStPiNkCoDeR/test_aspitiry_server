@@ -8,8 +8,8 @@
     "deploy": "npm run test && npm run build && npm run start",
     "lint": "eslint --fix --ext .ts src/**/*",
     "test": "jest",
-    "docker-deploy": "docker-compose up -d",
-    "docker-deploy-rebuild": "docker-compose up --build -d"
+    "docker:deploy": "docker-compose up",
+    "docker:deploy:rebuild": "docker-compose up --build"
   },
   "dependencies": {
     "@types/cookie-parser": "^1.4.2",

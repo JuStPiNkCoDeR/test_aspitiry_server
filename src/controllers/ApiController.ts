@@ -157,7 +157,10 @@ class ApiController implements Controller {
           (item: Training) => item.ID === input.ID;
       this.repo.update(condition, input.data);
 
-      res.sendStatus(204);
+      const trainings = this.repo.get(() => true);
+      res.json({
+        data: trainings,
+      });
     }
 
     /**
@@ -167,6 +170,7 @@ class ApiController implements Controller {
      * @protected
      */
     protected deleteTraining(req: Request, res: Response): void {
+      console.log(req.body);
       const input = this.validate(
           DELETE_TRAINING_SCHEMA,
           req.body,
@@ -183,7 +187,10 @@ class ApiController implements Controller {
           (item: Training) => item.ID === input.ID;
       this.repo.delete(predicate);
 
-      res.sendStatus(204);
+      const trainings = this.repo.get(() => true);
+      res.json({
+        data: trainings,
+      });
     }
 
     /**
@@ -204,7 +211,7 @@ class ApiController implements Controller {
       const {error, value} = schema.validate(input);
 
       if (error != undefined) {
-        res.status(400).send(errorMessage);
+        res.status(400).json(`${errorMessage}\n${error}`);
 
         return undefined;
       } else {

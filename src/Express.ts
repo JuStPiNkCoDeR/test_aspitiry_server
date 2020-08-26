@@ -43,8 +43,8 @@ class Express {
           this.db.getRepository('TRAININGS'),
       );
 
-      this.app.use(cors());
-      this.app.use('/api', apiController.getRouter());
+      this.app.options('/api', cors());
+      this.app.use('/api', cors(), apiController.getRouter());
     }
 }
 
