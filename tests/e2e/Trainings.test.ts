@@ -21,9 +21,9 @@ describe('ApiController endpoints test', () => {
           .expect(200);
       expect(res.body).toBeDefined();
 
-      const instanceData = res.body.data;
-      expect(instanceData).toBeDefined();
-      expect(instanceData).toMatchObject({
+      const instancesData = res.body.data;
+      expect(instancesData).toBeDefined();
+      expect(instancesData[instancesData.length - 1]).toMatchObject({
         date: new Date(date).toISOString(),
         fullName: 'Awesome name',
         activityType: ActivityTypes.WALKING,
@@ -85,21 +85,21 @@ describe('ApiController endpoints test', () => {
           .expect(200);
       expect(createdTrainingResponse.body).toBeDefined();
 
-      const instanceData = createdTrainingResponse.body.data;
-      expect(instanceData).toBeDefined();
-      expect(instanceData).toMatchObject({
+      const instancesData = createdTrainingResponse.body.data;
+      expect(instancesData).toBeDefined();
+      expect(instancesData[instancesData.length - 1]).toMatchObject({
         date: new Date(date).toISOString(),
         fullName: 'Awesome name',
         activityType: ActivityTypes.WALKING,
         distance: 2,
         comment: 'No comment',
       });
-      expect(instanceData).toHaveProperty('ID');
+      expect(instancesData[instancesData.length - 1]).toHaveProperty('ID');
 
       await request(app)
           .patch('/api/')
           .send({
-            ID: instanceData.ID,
+            ID: instancesData[instancesData.length - 1].ID,
             data: {
               comment: 'Marvelous comment',
             },
@@ -147,16 +147,16 @@ describe('ApiController endpoints test', () => {
           .expect(200);
       expect(createdTrainingResponse.body).toBeDefined();
 
-      const instanceData = createdTrainingResponse.body.data;
-      expect(instanceData).toBeDefined();
-      expect(instanceData).toMatchObject({
+      const instancesData = createdTrainingResponse.body.data;
+      expect(instancesData).toBeDefined();
+      expect(instancesData[instancesData.length - 1]).toMatchObject({
         date: new Date(date).toISOString(),
         fullName: 'Awesome name',
         activityType: ActivityTypes.WALKING,
         distance: 50,
         comment: '',
       });
-      expect(instanceData).toHaveProperty('ID');
+      expect(instancesData[instancesData.length - 1]).toHaveProperty('ID');
 
       let allTrainingsResponse = await request(app)
           .get('/api/?activityType=ALL')
@@ -171,7 +171,7 @@ describe('ApiController endpoints test', () => {
       await request(app)
           .delete('/api/')
           .send({
-            ID: instanceData.ID,
+            ID: instancesData[instancesData.length - 1].ID,
           })
           .expect(200);
 

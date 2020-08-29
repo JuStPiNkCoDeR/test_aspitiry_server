@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import logger from 'morgan';
 import cookieParser from 'cookie-parser';
-import ApiController from './controllers/ApiController';
+import {ApiController} from './controllers';
 import {ClassicDatabase, Database, Repositories} from './database';
 
 /**

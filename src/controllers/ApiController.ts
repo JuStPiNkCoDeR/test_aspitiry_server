@@ -50,7 +50,7 @@ export interface Controller {
  * @description Handles request to /api url
  *  Works on trainings storage.
  */
-class ApiController implements Controller {
+export class ApiController implements Controller {
     protected router: Router;
     protected repo: ClassicRepository<Training>;
 
@@ -67,7 +67,7 @@ class ApiController implements Controller {
     }
 
     /**
-     * @description Save and return saved instance
+     * @description Save and return all instances
      * @param {Request} req
      * @param {Response} res
      * @protected
@@ -96,8 +96,10 @@ class ApiController implements Controller {
 
       this.repo.save(training);
 
+      const trainings = this.repo.get(() => true);
+
       res.json({
-        data: training,
+        data: trainings,
       });
     }
 
@@ -127,6 +129,7 @@ class ApiController implements Controller {
           return item.activityType === input.activityType;
         }
       };
+
       const trainings = this.repo.get(filterFunction);
 
       res.json({
@@ -158,6 +161,7 @@ class ApiController implements Controller {
       this.repo.update(condition, input.data);
 
       const trainings = this.repo.get(() => true);
+
       res.json({
         data: trainings,
       });
@@ -170,7 +174,6 @@ class ApiController implements Controller {
      * @protected
      */
     protected deleteTraining(req: Request, res: Response): void {
-      console.log(req.body);
       const input = this.validate(
           DELETE_TRAINING_SCHEMA,
           req.body,
@@ -185,9 +188,11 @@ class ApiController implements Controller {
 
       const predicate =
           (item: Training) => item.ID === input.ID;
+
       this.repo.delete(predicate);
 
       const trainings = this.repo.get(() => true);
+
       res.json({
         data: trainings,
       });
@@ -227,5 +232,3 @@ class ApiController implements Controller {
       return this.router;
     }
 }
-
-export default ApiController;
